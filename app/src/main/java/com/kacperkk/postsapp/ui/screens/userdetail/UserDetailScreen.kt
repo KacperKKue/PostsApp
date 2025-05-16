@@ -17,13 +17,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.kacperkk.postsapp.model.User
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +41,13 @@ fun UserDetailScreen(
     navController: NavController,
     user: User?
 ) {
+    if(user == null) return
+
+    val viewModel: UserDetailViewModel = viewModel(
+        factory = UserDetailViewModel.provideFactory(user.id)
+    )
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,6 +113,48 @@ fun UserDetailScreen(
                 Text(user.company.name, fontWeight = FontWeight.Bold)
                 Text(user.company.catchPhrase)
                 Text(user.company.bs)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "📝 Zadania:",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                when (uiState) {
+                    is UserDetailViewModel.UIState.Loading -> {
+                        CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+                    }
+
+                    is UserDetailViewModel.UIState.Error -> {
+                        Text("Błąd ładowania zadań.", color = MaterialTheme.colorScheme.error)
+                    }
+
+                    is UserDetailViewModel.UIState.Success -> {
+                        val todos = (uiState as UserDetailViewModel.UIState.Success).todos
+                        LazyColumn {
+                            items(todos) { todo ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = todo.title,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(end = 8.dp)
+                                    )
+                                    Checkbox(
+                                        checked = todo.completed,
+                                        onCheckedChange = null, // uniemożliwia edycję
+                                        enabled = false // wyłącza interakcję
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
