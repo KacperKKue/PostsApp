@@ -41,7 +41,7 @@ class UserDetailViewModel(
         fetchData()
     }
 
-    private fun fetchData() {
+    internal fun fetchData() {
         viewModelScope.launch {
             try {
                 val todos = repository.getTodo(userId)

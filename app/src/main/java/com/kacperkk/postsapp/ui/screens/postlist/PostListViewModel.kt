@@ -35,7 +35,7 @@ class PostListViewModel(
         fetchData()
     }
 
-    private fun fetchData() {
+    internal fun fetchData() {
         viewModelScope.launch {
             try {
                 cachedPosts = postsRepository.getPosts()
@@ -49,8 +49,7 @@ class PostListViewModel(
 
                 _uiState.value = UIState.Success(postWithUsers)
             } catch (e: Exception) {
-                // _uiState.value = UiState.Error(e)
-                throw e
+                _uiState.value = UIState.Error(e)
             }
         }
     }

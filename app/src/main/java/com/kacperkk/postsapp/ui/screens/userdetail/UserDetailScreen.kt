@@ -41,12 +41,6 @@ fun UserDetailScreen(
     navController: NavController,
     user: User?
 ) {
-    if(user == null) return
-
-    val viewModel: UserDetailViewModel = viewModel(
-        factory = UserDetailViewModel.provideFactory(user.id)
-    )
-    val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -76,6 +70,12 @@ fun UserDetailScreen(
                 Text("Użytkownik nie znaleziony")
             }
         } else {
+
+            val viewModel: UserDetailViewModel = viewModel(
+                factory = UserDetailViewModel.provideFactory(user.id)
+            )
+            val uiState by viewModel.uiState.collectAsState()
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -126,8 +126,23 @@ fun UserDetailScreen(
                     }
 
                     is UserDetailViewModel.UIState.Error -> {
-                        Text("Błąd ładowania zadań.", color = MaterialTheme.colorScheme.error)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Błąd ładowania zadań.",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(onClick = { viewModel.fetchData() }) {
+                                Text("Spróbuj ponownie")
+                            }
+                        }
                     }
+
 
                     is UserDetailViewModel.UIState.Success -> {
                         val todos = (uiState as UserDetailViewModel.UIState.Success).todos
@@ -147,8 +162,8 @@ fun UserDetailScreen(
                                     )
                                     Checkbox(
                                         checked = todo.completed,
-                                        onCheckedChange = null, // uniemożliwia edycję
-                                        enabled = false // wyłącza interakcję
+                                        onCheckedChange = null,
+                                        enabled = false
                                     )
                                 }
                             }
