@@ -18,8 +18,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -65,6 +68,16 @@ fun PostListScreen(
                         text = "Posts",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    // Placeholder awatara
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle, // możesz użyć też innego imageVectora
+                        contentDescription = "User Avatar",
+                        modifier = Modifier
+                            .size(32.dp)
+                            .padding(end = 8.dp)
                     )
                 }
             )

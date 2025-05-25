@@ -1,11 +1,14 @@
 package com.kacperkk.postsapp.data
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.preferencesDataStore
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.kacperkk.postsapp.data.network.PostsService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
+import androidx.datastore.preferences.core.Preferences
 
 interface AppContainer {
     val postsRepository: PostsRepository
@@ -13,6 +16,8 @@ interface AppContainer {
 
 class DefaultAppContainer(context: Context) : AppContainer {
     private val postsApiUrl = "https://jsonplaceholder.typicode.com/"
+
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -26,4 +31,5 @@ class DefaultAppContainer(context: Context) : AppContainer {
     override val postsRepository: PostsRepository by lazy {
         NetworkPostsRepository(postService)
     }
+
 }

@@ -59,7 +59,7 @@ fun UserDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Profil użytkownika",
+                        text = (user?.name ?: "Profile"),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -135,7 +135,6 @@ fun UserDetailScreen(
 
                 item {
                     Column {
-                        Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = "🌐 Mapa:",
                             style = MaterialTheme.typography.titleMedium
@@ -144,7 +143,11 @@ fun UserDetailScreen(
                         MapItem(
                             user.address.geo.lat.toDouble(),
                             user.address.geo.lng.toDouble(),
-                            modifier = Modifier.height(500.dp)
+                            user.address.street,
+                            user.address.suite,
+                            modifier =  Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))

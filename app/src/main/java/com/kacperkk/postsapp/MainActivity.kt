@@ -18,10 +18,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.kacperkk.postsapp.model.PostDetail
 import com.kacperkk.postsapp.model.PostList
+import com.kacperkk.postsapp.model.Profile
 import com.kacperkk.postsapp.model.UserDetail
 import com.kacperkk.postsapp.ui.screens.postdetail.PostDetailScreen
 import com.kacperkk.postsapp.ui.screens.postlist.PostListScreen
 import com.kacperkk.postsapp.ui.screens.postlist.PostListViewModel
+import com.kacperkk.postsapp.ui.screens.profilescreen.ProfileScreen
 import com.kacperkk.postsapp.ui.screens.userdetail.UserDetailScreen
 import com.kacperkk.postsapp.ui.theme.PostsAppTheme
 
@@ -81,6 +83,11 @@ fun PostsApplication() {
             UserDetailScreen(
                 navController = navController,
                 user = post
+            )
+        }
+        composable<Profile> {
+            ProfileScreen(
+                navController = navController
             )
         }
     }
