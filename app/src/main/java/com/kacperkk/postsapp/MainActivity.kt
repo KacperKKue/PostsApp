@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.kacperkk.postsapp.model.PostDetail
 import com.kacperkk.postsapp.model.PostList
 import com.kacperkk.postsapp.model.UserDetail
@@ -34,12 +37,24 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PostsApplication() {
     val navController = rememberNavController()
 
     val viewModel: PostListViewModel =
         viewModel(factory = PostListViewModel.Factory)
+
+    val locationPermission = rememberMultiplePermissionsState(
+        permissions = listOf(
+            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    )
+
+    LaunchedEffect(key1 = locationPermission.permissions) {
+        locationPermission.launchMultiplePermissionRequest()
+    }
 
     NavHost(navController = navController, startDestination = PostList) {
         composable<PostList> {
