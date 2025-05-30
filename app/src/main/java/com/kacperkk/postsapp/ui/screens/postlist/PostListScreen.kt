@@ -49,7 +49,9 @@ import androidx.compose.ui.Alignment
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kacperkk.postsapp.model.PostDetail
+import com.kacperkk.postsapp.model.Profile
 import com.kacperkk.postsapp.model.UserDetail
+import com.kacperkk.postsapp.model.UserProfile
 import com.kacperkk.postsapp.ui.components.PostListItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,14 +73,15 @@ fun PostListScreen(
                     )
                 },
                 actions = {
-                    // Placeholder awatara
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle, // możesz użyć też innego imageVectora
-                        contentDescription = "User Avatar",
-                        modifier = Modifier
-                            .size(32.dp)
-                            .padding(end = 8.dp)
-                    )
+                    IconButton(onClick = {navController.navigate(Profile)}) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "User Avatar",
+                            modifier = Modifier
+                                .size(32.dp)
+                                .padding(end = 8.dp),
+                        )
+                    }
                 }
             )
         }
