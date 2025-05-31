@@ -5,32 +5,25 @@ import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
+import java.util.UUID
 
 object ImageUtils {
-    suspend fun saveProfileImage(context: Context, imageUri: Uri): String? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val filename = "profile_${System.currentTimeMillis()}.jpg"
-                val file = File(context.filesDir, filename)
+    fun saveImageToInternalStorage(context: Context, uri: Uri): String {
+        val fileName = UUID.randomUUID().toString() + ".jpg"
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+        val outputStream: OutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
 
-                context.contentResolver.openInputStream(imageUri)?.use { input ->
-                    file.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                file.absolutePath
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
             }
         }
+        return fileName
     }
 
-    suspend fun deleteOldImage(context: Context, oldPath: String?) {
-        oldPath?.let {
-            withContext(Dispatchers.IO) {
-                File(oldPath).delete()
-            }
-        }
+    fun getFileFromInternalStorage(context: Context, fileName: String): File {
+        return File(context.filesDir, fileName)
     }
 }

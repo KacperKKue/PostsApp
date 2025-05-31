@@ -12,12 +12,11 @@ import androidx.datastore.preferences.core.Preferences
 
 interface AppContainer {
     val postsRepository: PostsRepository
+    val userPreferencesRepository: UserPreferencesRepository
 }
 
 class DefaultAppContainer(context: Context) : AppContainer {
     private val postsApiUrl = "https://jsonplaceholder.typicode.com/"
-
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
@@ -32,4 +31,7 @@ class DefaultAppContainer(context: Context) : AppContainer {
         NetworkPostsRepository(postService)
     }
 
+    override val userPreferencesRepository: UserPreferencesRepository by lazy {
+        UserPreferencesRepository(context)
+    }
 }

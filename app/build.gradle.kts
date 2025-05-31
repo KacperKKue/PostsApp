@@ -100,12 +100,17 @@ dependencies {
 
     // Map
     implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
 
     // Permission
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+
+    // Images
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.2")
 
 }

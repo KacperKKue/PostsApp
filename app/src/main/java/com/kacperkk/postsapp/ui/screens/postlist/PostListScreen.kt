@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -51,8 +52,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kacperkk.postsapp.model.PostDetail
 import com.kacperkk.postsapp.model.Profile
 import com.kacperkk.postsapp.model.UserDetail
-import com.kacperkk.postsapp.model.UserProfile
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import com.kacperkk.postsapp.data.UserPreferencesRepository
 import com.kacperkk.postsapp.ui.components.PostListItem
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +69,14 @@ fun PostListScreen(
     viewModel: PostListViewModel
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+
+    val userPreferencesRepository = remember { UserPreferencesRepository(context) }
+    val avatarFileName by userPreferencesRepository.avatarPath.collectAsState(initial = "")
+    val avatarFile = remember(avatarFileName) {
+        if (avatarFileName.isNotBlank()) File(context.filesDir, avatarFileName) else null
+    }
 
     Scaffold(
         topBar = {
@@ -73,14 +89,25 @@ fun PostListScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = {navController.navigate(Profile)}) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "User Avatar",
-                            modifier = Modifier
-                                .size(32.dp)
-                                .padding(end = 8.dp),
-                        )
+                    IconButton(onClick = { navController.navigate(Profile) }) {
+                        if (avatarFile?.exists() == true) {
+                            AsyncImage(
+                                model = avatarFile,
+                                contentDescription = "User Avatar",
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = "Default Avatar",
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .padding(end = 8.dp)
+                            )
+                        }
                     }
                 }
             )

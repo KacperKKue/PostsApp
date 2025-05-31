@@ -24,6 +24,7 @@ import com.kacperkk.postsapp.ui.screens.postdetail.PostDetailScreen
 import com.kacperkk.postsapp.ui.screens.postlist.PostListScreen
 import com.kacperkk.postsapp.ui.screens.postlist.PostListViewModel
 import com.kacperkk.postsapp.ui.screens.profilescreen.ProfileScreen
+import com.kacperkk.postsapp.ui.screens.profilescreen.ProfileViewModel
 import com.kacperkk.postsapp.ui.screens.userdetail.UserDetailScreen
 import com.kacperkk.postsapp.ui.theme.PostsAppTheme
 
@@ -44,8 +45,11 @@ class MainActivity : ComponentActivity() {
 fun PostsApplication() {
     val navController = rememberNavController()
 
-    val viewModel: PostListViewModel =
+    val postListViewModel: PostListViewModel =
         viewModel(factory = PostListViewModel.Factory)
+
+    val profileViewModel: ProfileViewModel =
+        viewModel(factory = ProfileViewModel.Factory)
 
     val locationPermission = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -62,13 +66,13 @@ fun PostsApplication() {
         composable<PostList> {
             PostListScreen(
                 navController = navController,
-                viewModel = viewModel
+                viewModel = postListViewModel
             )
         }
         composable<PostDetail> {
             val args = it.toRoute<PostDetail>()
 
-            val post = viewModel.getPostById(args.postId)
+            val post = postListViewModel.getPostById(args.postId)
 
             PostDetailScreen(
                 navController = navController,
@@ -78,7 +82,7 @@ fun PostsApplication() {
         composable<UserDetail> {
             val args = it.toRoute<UserDetail>()
 
-            val post = viewModel.getUserById(args.userId)
+            val post = postListViewModel.getUserById(args.userId)
 
             UserDetailScreen(
                 navController = navController,
@@ -87,7 +91,8 @@ fun PostsApplication() {
         }
         composable<Profile> {
             ProfileScreen(
-                navController = navController
+                navController = navController,
+                viewModel = profileViewModel
             )
         }
     }
