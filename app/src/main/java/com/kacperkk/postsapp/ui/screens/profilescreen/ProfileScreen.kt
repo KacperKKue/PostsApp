@@ -21,15 +21,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -116,7 +120,7 @@ fun ProfileScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Profile",
+                        text = "Profil",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -136,15 +140,15 @@ fun ProfileScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
+            Card(
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(CircleShape)
-                    .clickable { launcher.launch("image/*") }
+                    .clickable { launcher.launch("image/*") },
+                shape = CircleShape,
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 if (avatarPath.isNotBlank()) {
-                    val imageFile: File = getFileFromInternalStorage(context, avatarPath)
-
+                    val imageFile = getFileFromInternalStorage(context, avatarPath)
                     if (imageFile.exists()) {
                         AsyncImage(
                             model = imageFile,
@@ -156,35 +160,41 @@ fun ProfileScreen(
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
                             contentDescription = "Default Avatar",
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 } else {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Default Avatar",
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
 
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            TextField(
+            OutlinedTextField(
                 value = userName,
                 onValueChange = { viewModel.updateUserName(it) },
                 label = { Text("Imię") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextField(
+            OutlinedTextField(
                 value = userSurname,
                 onValueChange = { viewModel.updateUserSurname(it) },
                 label = { Text("Nazwisko") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
+
 
             Spacer(modifier = Modifier.height(6.dp))
 
@@ -199,7 +209,7 @@ fun ProfileScreen(
                 ) {
                     if (!permissionState.status.isGranted) {
                         Button(onClick = { permissionState.launchPermissionRequest() }) {
-                            Text("Poproś o dostęp do lokalizacji")
+                            Text("Przyznaj dostęp do lokalizacji")
                         }
                     } else {
                         when (uiState) {
@@ -227,29 +237,39 @@ fun ProfileScreen(
                                     }
                                 }
 
-                                GoogleMap(
-                                    modifier = Modifier.fillMaxSize(),
-                                    cameraPositionState = cameraPositionState
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp),
+                                    shape = RoundedCornerShape(16.dp),
+                                    elevation = CardDefaults.cardElevation(4.dp)
                                 ) {
-                                    Marker(
-                                        state = MarkerState(
-                                            position = LatLng(
-                                                location.latitude,
-                                                location.longitude
-                                            )
-                                        ),
-                                        title = "Twoja lokalizacja",
-                                    )
-                                    userLatLngs.forEachIndexed { index, latLng ->
-                                        Marker(
-                                            state = MarkerState(position = latLng),
-                                            title = "Użytkownik #${users[index].id}", // lub możesz użyć users[index].name
-                                            snippet = users[index].name,
-                                            icon = BitmapDescriptorFactory.defaultMarker(
-                                                BitmapDescriptorFactory.HUE_AZURE
-                                            )
 
+                                    GoogleMap(
+                                        modifier = Modifier.fillMaxSize(),
+                                        cameraPositionState = cameraPositionState,
+
+                                        ) {
+                                        Marker(
+                                            state = MarkerState(
+                                                position = LatLng(
+                                                    location.latitude,
+                                                    location.longitude
+                                                )
+                                            ),
+                                            title = "Twoja lokalizacja",
                                         )
+                                        userLatLngs.forEachIndexed { index, latLng ->
+                                            Marker(
+                                                state = MarkerState(position = latLng),
+                                                title = "Użytkownik #${users[index].id}", // lub możesz użyć users[index].name
+                                                snippet = users[index].name,
+                                                icon = BitmapDescriptorFactory.defaultMarker(
+                                                    BitmapDescriptorFactory.HUE_AZURE
+                                                )
+
+                                            )
+                                        }
                                     }
                                 }
                             }

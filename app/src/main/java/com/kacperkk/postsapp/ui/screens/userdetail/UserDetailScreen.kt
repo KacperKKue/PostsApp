@@ -2,6 +2,7 @@ package com.kacperkk.postsapp.ui.screens.userdetail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,10 +44,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -66,14 +69,14 @@ fun UserDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = (user?.name ?: "Profile"),
+                        text = user?.name ?: "Profil",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Powrót")
                     }
                 }
             )
@@ -86,7 +89,7 @@ fun UserDetailScreen(
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Użytkownik nie znaleziony")
+                Text("Użytkownik nie znaleziony", style = MaterialTheme.typography.bodyLarge)
             }
         } else {
             val viewModel: UserDetailViewModel = viewModel(
@@ -99,148 +102,133 @@ fun UserDetailScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 item {
-                    Column {
-                        Text(
-                            text = user.name,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        Text(
-                            text = "@${user.username}",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(user.name, style = MaterialTheme.typography.headlineSmall)
+                            Text(
+                                "@${user.username}",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
 
-                        Text(
-                            text = "📧 ${user.email}",
-                            modifier = Modifier.clickable {
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            ContactItem("📧", user.email) {
                                 val intent = Intent(Intent.ACTION_SENDTO).apply {
                                     data = Uri.parse("mailto:${user.email}")
                                 }
                                 context.startActivity(intent)
                             }
-                        )
-                        Text(
-                            text = "📞 ${user.phone}",
-                            modifier = Modifier.clickable {
+                            ContactItem("📞", user.phone) {
                                 val intent = Intent(Intent.ACTION_DIAL).apply {
                                     data = Uri.parse("tel:${user.phone}")
                                 }
                                 context.startActivity(intent)
                             }
-                        )
-                        Text(
-                            text = "🌐 ${user.website}",
-                            modifier = Modifier.clickable {
+                            ContactItem("🌐", user.website) {
+                                val url = "https://${user.website}"
                                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                                    val url = "https://${user.website}"
                                     data = url.toUri()
                                 }
                                 context.startActivity(intent)
                             }
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "🏠 Adres:",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text("${user.address.street}, ${user.address.suite}")
-                        Text("${user.address.city}, ${user.address.zipcode}")
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "🏢 Firma:",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Text(user.company.name, fontWeight = FontWeight.Bold)
-                        Text(user.company.catchPhrase)
-                        Text(user.company.bs)
+                            Text("🏠 Adres:", style = MaterialTheme.typography.titleMedium)
+                            Text("${user.address.street}, ${user.address.suite}")
+                            Text("${user.address.city}, ${user.address.zipcode}")
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Text("🏢 Firma:", style = MaterialTheme.typography.titleMedium)
+                            Text(user.company.name, fontWeight = FontWeight.Bold)
+                            Text(user.company.catchPhrase)
+                            Text(user.company.bs)
+                        }
                     }
                 }
 
                 item {
-                    Column {
-                        Text(
-                            text = "🌐 Mapa:",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                    Text("🌐 Mapa:", style = MaterialTheme.typography.titleMedium)
 
-                        MapItem(
-                            user.address.geo.lat.toDouble(),
-                            user.address.geo.lng.toDouble(),
-                            user.address.street,
-                            user.address.suite,
-                            modifier =  Modifier
-                                .height(200.dp)
-                                .fillMaxWidth()
-                        )
+                    Spacer(modifier = Modifier.height(6.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                    MapItem(
+                        lat = user.address.geo.lat.toDouble(),
+                        lng = user.address.geo.lng.toDouble(),
+                        street = user.address.street,
+                        suite = user.address.suite,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                    )
+                }
 
-                        Text(
-                            text = "📝 Zadania:",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
+                item {
+                    Text("📝 Zadania:", style = MaterialTheme.typography.titleMedium)
                 }
 
                 when (uiState) {
                     is UserDetailViewModel.UIState.Loading -> {
                         item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
+                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                 CircularProgressIndicator(modifier = Modifier.padding(16.dp))
                             }
                         }
                     }
+
                     is UserDetailViewModel.UIState.Error -> {
                         item {
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Text(
-                                    text = "Błąd ładowania zadań.",
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("Błąd ładowania zadań.", color = MaterialTheme.colorScheme.error)
                                 Button(onClick = { viewModel.fetchData() }) {
                                     Text("Spróbuj ponownie")
                                 }
                             }
                         }
                     }
+
                     is UserDetailViewModel.UIState.Success -> {
                         val todos = (uiState as UserDetailViewModel.UIState.Success).todos
                         items(todos) { todo ->
-                            Row(
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                    .fillMaxWidth(),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = if (todo.completed) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface
+                                )
                             ) {
-                                Text(
-                                    text = todo.title,
+                                Row(
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .padding(end = 8.dp)
-                                )
-                                Checkbox(
-                                    checked = todo.completed,
-                                    onCheckedChange = null,
-                                    enabled = false
-                                )
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = todo.title,
+                                        modifier = Modifier.weight(1f),
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Checkbox(
+                                        checked = todo.completed,
+                                        onCheckedChange = null,
+                                        enabled = false
+                                    )
+                                }
                             }
                         }
                     }
@@ -248,4 +236,16 @@ fun UserDetailScreen(
             }
         }
     }
+}
+
+@Composable
+fun ContactItem(icon: String, value: String, onClick: () -> Unit) {
+    Text(
+        text = "$icon $value",
+        modifier = Modifier
+            .padding(vertical = 2.dp)
+            .clickable { onClick() },
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
 }

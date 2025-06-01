@@ -83,7 +83,7 @@ fun PostListScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Posts",
+                        text = "Posty",
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -109,7 +109,7 @@ fun PostListScreen(
                             )
                         }
                     }
-                }
+                },
             )
         }
     ) { paddingValues ->
