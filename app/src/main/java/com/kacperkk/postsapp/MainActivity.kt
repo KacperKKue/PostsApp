@@ -51,7 +51,7 @@ fun PostsApplication() {
     val profileViewModel: ProfileViewModel =
         viewModel(factory = ProfileViewModel.Factory)
 
-    val locationPermission = rememberMultiplePermissionsState(
+    /*val locationPermission = rememberMultiplePermissionsState(
         permissions = listOf(
             android.Manifest.permission.ACCESS_COARSE_LOCATION,
             android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -60,7 +60,7 @@ fun PostsApplication() {
 
     LaunchedEffect(key1 = locationPermission.permissions) {
         locationPermission.launchMultiplePermissionRequest()
-    }
+    }*/
 
     NavHost(navController = navController, startDestination = PostList) {
         composable<PostList> {
@@ -92,7 +92,8 @@ fun PostsApplication() {
         composable<Profile> {
             ProfileScreen(
                 navController = navController,
-                viewModel = profileViewModel
+                viewModel = profileViewModel,
+                postListViewModel = postListViewModel
             )
         }
     }

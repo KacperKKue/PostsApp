@@ -54,6 +54,8 @@ class PostListViewModel(
         }
     }
 
+    fun getAllUsers(): List<User> = cachedUsers
+
     fun getPostById(postId: Int): Post? =
         cachedPosts.find { it.id == postId }
 

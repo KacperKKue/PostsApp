@@ -1,5 +1,6 @@
 package com.kacperkk.postsapp.ui.screens.postdetail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.kacperkk.postsapp.model.PostDetail
+import com.kacperkk.postsapp.model.UserDetail
 import com.kacperkk.postsapp.model.posts.Post
 import com.kacperkk.postsapp.ui.screens.postlist.PostListViewModel
 
@@ -84,7 +86,10 @@ fun PostDetailScreen(
                 Text(
                     text = "Autor ID: ${post.userId}",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable {
+                        navController.navigate(UserDetail(post.userId))
+                    }
                 )
             }
         }

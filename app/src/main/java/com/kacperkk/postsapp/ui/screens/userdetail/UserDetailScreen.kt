@@ -1,5 +1,8 @@
 package com.kacperkk.postsapp.ui.screens.userdetail
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,9 +47,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kacperkk.postsapp.ui.components.MapItem
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +59,8 @@ fun UserDetailScreen(
     navController: NavController,
     user: User?
 ) {
+    val context = LocalContext.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -108,9 +115,34 @@ fun UserDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        Text("📧 ${user.email}")
-                        Text("📞 ${user.phone}")
-                        Text("🌐 ${user.website}")
+                        Text(
+                            text = "📧 ${user.email}",
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                                    data = Uri.parse("mailto:${user.email}")
+                                }
+                                context.startActivity(intent)
+                            }
+                        )
+                        Text(
+                            text = "📞 ${user.phone}",
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_DIAL).apply {
+                                    data = Uri.parse("tel:${user.phone}")
+                                }
+                                context.startActivity(intent)
+                            }
+                        )
+                        Text(
+                            text = "🌐 ${user.website}",
+                            modifier = Modifier.clickable {
+                                val intent = Intent(Intent.ACTION_VIEW).apply {
+                                    val url = "https://${user.website}"
+                                    data = url.toUri()
+                                }
+                                context.startActivity(intent)
+                            }
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
