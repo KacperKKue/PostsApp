@@ -29,3 +29,6 @@
 
 ### Intencje
 <img src="/images/Intencje.gif" alt="Image title" width="250">
+
+### Ikona aplikacji
+<img src="/images/Ikona.gif" alt="Image title" width="250">
